@@ -259,6 +259,7 @@ read_file() {
 
 print_file() {
     # Print the portions of the file that fit on the screen.
+    # 'LINES-2': Leave some room for the status-bar.
     for ((i=0;i<LINES-2;i++)); {
         printf '%s\n' "${file_contents[i]}"
     }
@@ -383,6 +384,7 @@ read_file() {
 
 print_file() {
     # Print the portions of the file that fit on the screen.
+    # 'LINES-2': Leave some room for the status-bar.
     for ((i=0;i<LINES-2;i++)); {
         printf '%s\n' "${file_contents[i]}"
     }
