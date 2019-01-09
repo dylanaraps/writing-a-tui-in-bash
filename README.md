@@ -17,6 +17,7 @@ To date I have written 3 different programs using this method. The best example 
 * [Handling terminal window size](#handling-terminal-window-size)
 * [Handling key-presses](#handling-key-presses)
 * [Start of our basic program.](#start-of-our-basic-program)
+* [Scrolling](#scrolling)
 
 <!-- vim-markdown-toc -->
 
@@ -70,7 +71,7 @@ main() {
     # state on Ctrl+C, 'exit' etc.
     # '\e[?7h':  Re-enable line wrapping.
     # '\e[?25h': Re-enable the cursor.
-    trap 'printf "\e[?7h\e[?25h"' EXIT
+    trap 'clear_screen; printf "\e[?7h\e[?25h"' EXIT
 
     # Main loop.
     for ((;;)); {
@@ -117,7 +118,7 @@ main() {
     # state on Ctrl+C, 'exit' etc.
     # '\e[?7h':  Re-enable line wrapping.
     # '\e[?25h': Re-enable the cursor.
-    trap 'printf "\e[?7h\e[?25h"' EXIT
+    trap 'clear_screen; printf "\e[?7h\e[?25h"' EXIT
 
     # Trap 'SIGWINCH'
     # This signal allows us to react to a window size change.
@@ -185,7 +186,7 @@ main() {
     # state on Ctrl+C, 'exit' etc.
     # '\e[?7h':  Re-enable line wrapping.
     # '\e[?25h': Re-enable the cursor.
-    trap 'printf "\e[?7h\e[?25h"' EXIT
+    trap 'clear_screen; printf "\e[?7h\e[?25h"' EXIT
 
     # Trap 'SIGWINCH'
     # This signal allows us to react to a window size change.
@@ -208,7 +209,7 @@ main "$@"
 For the purposes of this guide we'll be recreating the program `less`. The idea is simple and conveys the concepts in this guide well. This step adds
 basic argument parsing and the input of a file to an array.
 
-The program now prints the entirety of the file and waits for user input. The foundations are now in place for us to add scrolling and other features.
+The program now prints the entirety of the file and waits for user input. The foundations are now in place for us to add scrolling, a status-bar and other features.
 
 ```sh
 #!/usr/bin/env bash
@@ -274,7 +275,7 @@ main() {
     # state on Ctrl+C, 'exit' etc.
     # '\e[?7h':  Re-enable line wrapping.
     # '\e[?25h': Re-enable the cursor.
-    trap 'printf "\e[?7h\e[?25h"' EXIT
+    trap 'clear_screen; printf "\e[?7h\e[?25h"' EXIT
 
     # Trap 'SIGWINCH'
     # This signal allows us to react to a window size change.
@@ -295,3 +296,7 @@ main() {
 
 main "$@"
 ```
+
+## Scrolling
+
+
