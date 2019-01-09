@@ -43,6 +43,7 @@ main "$@"
 
 The next step is to clear the screen, hide the cursor and disable line-wrapping. There are cases where the cursor should be shown throughout or line-wrapping should be enabled but for the purposes of this tutorial we'll disable them.
 
+Further reading: `man trap` and `trap -l`
 
 ```sh
 #!/usr/bin/env bash
