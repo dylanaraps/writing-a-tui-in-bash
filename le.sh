@@ -59,11 +59,15 @@ read_file() {
 
 print_file() {
     # Print the portions of the file that fit on the screen.
-    # '-2':           Leave some room for the status-bar.
-    # 'i=scroll':     Print lines in file from 'scroll'
-    # 'LINES+scroll': Print to 'LINES+scroll
+    #
+    # '-2':              Leave some room for the status-bar.
+    # '${scroll:=0}':  Set default value of '$scroll' to '0'.
+    #
+    # Print lines in file from '$scroll' to '$LINES + $scroll - 2'.
+    # '$LINES' acts as the max number of lines we can print.
+    # We subtract '2' from this var to leave room for the status-bar.
     for ((i=${scroll:=0};i<LINES+scroll-2;i++)); {
-        # '\e[K': Clear line before printing.
+        # '\e[K': Clear line after line content.
         printf '%s\e[K\n' "${file_contents[i]}"
     }
 }
@@ -73,10 +77,16 @@ get_key() {
     case "$1" in
         # 'B' is what bash sees when you press 'Down Arrow'.
         # It's a portion of the escape sequence '\e[B' (cursor down).
+        #
+        # Make sure we don't scroll down past the end of the file and
+        # increment scroll variable by 1 on scroll down.
         B|j) ((scroll < ${#file_contents[@]} - LINES + 2)) && ((scroll+=1)) ;;
 
         # 'A' is what bash sees when you press 'Up Arrow'.
         # It's a portion of the escape sequence '\e[A' (cursor up).
+        #
+        # Make sure we don't scroll up past the start of the file and
+        # deincrement scroll variable by 1 on scroll up.
         A|k) ((scroll > 0)) && ((scroll-=1)) ;;
 
         # Exit the program on press of 'q'.
