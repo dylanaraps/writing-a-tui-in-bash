@@ -14,6 +14,9 @@ To date I have written 3 different programs using this method. The best example 
 
 * [Getting Started - The main loop](#getting-started---the-main-loop)
 * [Clearing the screen](#clearing-the-screen)
+* [Handling terminal window size](#handling-terminal-window-size)
+* [Handling key-presses](#handling-key-presses)
+* [Start of our basic program.](#start-of-our-basic-program)
 
 <!-- vim-markdown-toc -->
 
@@ -64,7 +67,7 @@ main() {
 
     # Trap 'EXIT'.
     # This is required to reset the terminal to a useable
-    # state on Ctrl+C, exit etc.
+    # state on Ctrl+C, 'exit' etc.
     # '\e[?7h':  Re-enable line wrapping.
     # '\e[?25h': Re-enable the cursor.
     trap 'printf "\e[?7h\e[?25h"' EXIT
@@ -74,6 +77,219 @@ main() {
         # Wait for user to press a key.
         # Value is stored in '$REPLY'
         read -rsn 1
+    }
+}
+
+main "$@"
+```
+
+## Handling terminal window size
+
+Knowing the size of the terminal window is essential when implementing a status bar or any kind of scrolling. Handling window resize is even more essential.
+
+```sh
+#!/usr/bin/env bash
+#
+# program
+
+clear_screen() {
+    # Clear the screen.
+    # '\e[?7l':  Disable line wrapping.
+    # '\e[?25l': Hide the cursor.
+    # '\e[2J':   Clear the screen.
+    # '\e[H':    Move the cursor to '0,0' (home).
+    printf '\e[?7l\e[?25l\e[2J\e[H'
+}
+
+get_term_size() {
+    # Get the terminal lines and columns.
+    # This can't reliably be done in pure bash.
+    # 'stty' is used as it's POSIX and always available.
+    read -r LINES COLUMNS < <(stty size)
+}
+
+main() {
+    get_term_size
+    clear_screen
+
+    # Trap 'EXIT'.
+    # This is required to reset the terminal to a useable
+    # state on Ctrl+C, 'exit' etc.
+    # '\e[?7h':  Re-enable line wrapping.
+    # '\e[?25h': Re-enable the cursor.
+    trap 'printf "\e[?7h\e[?25h"' EXIT
+
+    # Trap 'SIGWINCH'
+    # This signal allows us to react to a window size change.
+    # Whenever the window is resized, we re-fetch the terminal size.
+    trap 'get_term_size' WINCH
+
+    # Main loop.
+    for ((;;)); {
+        # Wait for user to press a key.
+        # Value is stored in '$REPLY'
+        read -rsn 1
+    }
+}
+
+main "$@"
+```
+
+## Handling key-presses
+
+Another building block until we start work on what the TUI will represent. This is really simple. The tricky part is figuring out what BASH sees when you type a special key (*Enter, Escape, Arrow Keys*).
+
+```sh
+#!/usr/bin/env bash
+#
+# program
+
+clear_screen() {
+    # Clear the screen.
+    # '\e[?7l':  Disable line wrapping.
+    # '\e[?25l': Hide the cursor.
+    # '\e[2J':   Clear the screen.
+    # '\e[H':    Move the cursor to '0,0' (home).
+    printf '\e[?7l\e[?25l\e[2J\e[H'
+}
+
+get_term_size() {
+    # Get the terminal lines and columns.
+    # This can't reliably be done in pure bash.
+    # 'stty' is used as it's POSIX and always available.
+    read -r LINES COLUMNS < <(stty size)
+}
+
+get_key() {
+    # Handle user input.
+    case "$1" in
+        # 'B' is what bash sees when you press 'Down Arrow'.
+        # It's a portion of the escape sequence '\e[B' (cursor down).
+        B|j) ;;
+
+        # 'A' is what bash sees when you press 'Up Arrow'.
+        # It's a portion of the escape sequence '\e[A' (cursor up).
+        A|k) ;;
+
+        # Exit the program on press of 'q'.
+        q) exit ;;
+    esac
+}
+
+main() {
+    get_term_size
+    clear_screen
+
+    # Trap 'EXIT'.
+    # This is required to reset the terminal to a useable
+    # state on Ctrl+C, 'exit' etc.
+    # '\e[?7h':  Re-enable line wrapping.
+    # '\e[?25h': Re-enable the cursor.
+    trap 'printf "\e[?7h\e[?25h"' EXIT
+
+    # Trap 'SIGWINCH'
+    # This signal allows us to react to a window size change.
+    # Whenever the window is resized, we re-fetch the terminal size.
+    trap 'get_term_size' WINCH
+
+    # Main loop.
+    for ((;;)); {
+        # Wait for user to press a key.
+        # Value is stored in '$REPLY'
+        read -rsn 1 && get_key "$REPLY"
+    }
+}
+
+main "$@"
+```
+
+## Start of our basic program.
+
+For the purposes of this guide we'll be recreating the program `less`. The idea is simple and conveys the concepts in this guide well. This step adds
+basic argument parsing and the input of a file to an array.
+
+The program now prints the entirety of the file and waits for user input. The foundations are now in place for us to add scrolling and other features.
+
+```sh
+#!/usr/bin/env bash
+#
+# program
+
+clear_screen() {
+    # Clear the screen.
+    # '\e[?7l':  Disable line wrapping.
+    # '\e[?25l': Hide the cursor.
+    # '\e[2J':   Clear the screen.
+    # '\e[H':    Move the cursor to '0,0' (home).
+    printf '\e[?7l\e[?25l\e[2J\e[H'
+}
+
+get_term_size() {
+    # Get the terminal lines and columns.
+    # This can't reliably be done in pure bash.
+    # 'stty' is used as it's POSIX and always available.
+    read -r LINES COLUMNS < <(stty size)
+}
+
+read_file() {
+    # Error handling for null file or non-existent file.
+    if [[ ! -f "$1" ]]; then
+        # '>&2':        Print the error string to 'stderr'.
+        # '${1:-null}': If '$1' is empty, display 'null'.
+        printf '%s\n' "${1:-null}: No such file." >&2
+        exit 1
+    fi
+
+    # Read the file into an array line by line.
+    # bash 4+: Use 'readarray'/'mapfile'.
+    while IFS= read -r line; do
+        file_contents+=("$line")
+    done < "$1"
+
+    printf '%s\n' "${file_contents[@]}"
+}
+
+get_key() {
+    # Handle user input.
+    case "$1" in
+        # 'B' is what bash sees when you press 'Down Arrow'.
+        # It's a portion of the escape sequence '\e[B' (cursor down).
+        B|j) ;;
+
+        # 'A' is what bash sees when you press 'Up Arrow'.
+        # It's a portion of the escape sequence '\e[A' (cursor up).
+        A|k) ;;
+
+        # Exit the program on press of 'q'.
+        q) exit ;;
+    esac
+}
+
+main() {
+    get_term_size
+    clear_screen
+
+    # Trap 'EXIT'.
+    # This is required to reset the terminal to a useable
+    # state on Ctrl+C, 'exit' etc.
+    # '\e[?7h':  Re-enable line wrapping.
+    # '\e[?25h': Re-enable the cursor.
+    trap 'printf "\e[?7h\e[?25h"' EXIT
+
+    # Trap 'SIGWINCH'
+    # This signal allows us to react to a window size change.
+    # Whenever the window is resized, we re-fetch the terminal size.
+    trap 'get_term_size' WINCH
+
+    # Read the file.
+    # Error handling is done in the function.
+    read_file "$1"
+
+    # Main loop.
+    for ((;;)); {
+        # Wait for user to press a key.
+        # Value is stored in '$REPLY'
+        read -rsn 1 && get_key "$REPLY"
     }
 }
 
