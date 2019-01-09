@@ -380,6 +380,16 @@ read_file() {
     done < "$1"
 }
 
+print_file() {
+    # Print the portions of the file that fit on the screen.
+    for ((i=0;i<LINES-2;i++)); {
+        printf '%s\n' "${file_contents[i]}"
+    }
+
+    # Reset the cursor position.
+    printf '\e[H'
+}
+
 get_key() {
     # Handle user input.
     case "$1" in
@@ -403,7 +413,6 @@ main() {
 
     get_term_size
     clear_screen
-    status_bar
 
     # Trap 'EXIT'.
     # This is required to reset the terminal to a useable
@@ -415,10 +424,13 @@ main() {
     # Trap 'SIGWINCH'
     # This signal allows us to react to a window size change.
     # Whenever the window is resized, we re-fetch the terminal size.
-    trap 'get_term_size; clear_screen; status_bar' WINCH
+    trap 'get_term_size; clear_screen; print_file; status_bar' WINCH
 
     # Main loop.
     for ((;;)); {
+        print_file
+        status_bar
+
         # Wait for user to press a key.
         # Value is stored in '$REPLY'
         read -rsn 1 && get_key "$REPLY"
