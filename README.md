@@ -305,6 +305,7 @@ main() {
 
     # Main loop.
     for ((;;)); {
+        # Redraw the TUI on every key-press.
         print_file
 
         # Wait for user to press a key.
@@ -428,6 +429,7 @@ main() {
 
     # Main loop.
     for ((;;)); {
+        # Redraw the TUI on every key-press.
         print_file
         status_bar
 
