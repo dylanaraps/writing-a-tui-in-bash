@@ -212,7 +212,9 @@ main "$@"
 For the purposes of this guide we'll be recreating the program `less`. The idea is simple and conveys the concepts in this guide well. This step adds
 basic argument parsing and the input of a file to an array.
 
-The program now reads the entirety of the file and waits for user input. Nothing much is happening yet but the foundations are now in place for us to add scrolling, a status-bar and other features.
+The program now prints the entirety of the file and waits for user input. The file is printed to fit onto the screen and it reacts accordingly to window resize.
+
+Nothing much is happening yet but the foundations are now in place for us to add scrolling, a status-bar and other features.
 
 ```sh
 #!/usr/bin/env bash
@@ -245,11 +247,24 @@ read_file() {
         exit 1
     fi
 
+    # Store the file name for use later.
+    file_name="$1"
+
     # Read the file into an array line by line.
     # bash 4+: Use 'readarray'/'mapfile'.
     while IFS= read -r line; do
         file_contents+=("$line")
     done < "$1"
+}
+
+print_file() {
+    # Print the portions of the file that fit on the screen.
+    for ((i=0;i<LINES-2;i++)); {
+        printf '%s\n' "${file_contents[i]}"
+    }
+
+    # Reset the cursor position.
+    printf '\e[H'
 }
 
 get_key() {
@@ -286,10 +301,12 @@ main() {
     # Trap 'SIGWINCH'
     # This signal allows us to react to a window size change.
     # Whenever the window is resized, we re-fetch the terminal size.
-    trap 'get_term_size; clear_screen' WINCH
+    trap 'get_term_size; clear_screen; print_file' WINCH
 
     # Main loop.
     for ((;;)); {
+        print_file
+
         # Wait for user to press a key.
         # Value is stored in '$REPLY'
         read -rsn 1 && get_key "$REPLY"
@@ -301,7 +318,7 @@ main "$@"
 
 ## Adding a Status-bar
 
-This next part requires an abundance of escape sequences. The status-bar reacts to window size since we redraw it on window resize.
+This next part requires an abundance of escape sequences. The status-bar reacts to window size and sticks to the bottom.
 
 ```sh
 #!/usr/bin/env bash
