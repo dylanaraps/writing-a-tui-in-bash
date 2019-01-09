@@ -1,1 +1,1 @@
-# writing-a-tui-in-bash
+# How to write a TUI in BASH
