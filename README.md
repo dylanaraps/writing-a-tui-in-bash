@@ -21,6 +21,13 @@ To date I have written 3 different programs using this method. The best example 
 * [Escape Sequences](#escape-sequences)
     * [Hiding and Showing the cursor](#hiding-and-showing-the-cursor)
     * [Line wrapping](#line-wrapping)
+    * [Moving the cursor to specific coordinates](#moving-the-cursor-to-specific-coordinates)
+    * [Moving the cursor to the bottom of the terminal.](#moving-the-cursor-to-the-bottom-of-the-terminal)
+    * [Moving the cursor relatively](#moving-the-cursor-relatively)
+        * [Cursor Up](#cursor-up)
+        * [Cursor Down](#cursor-down)
+        * [Cursor Left](#cursor-left)
+        * [Cursor Right](#cursor-right)
     * [Clearing the screen](#clearing-the-screen)
     * [Setting the scroll area.](#setting-the-scroll-area)
     * [Limiting cursor movement to inside the scroll area.](#limiting-cursor-movement-to-inside-the-scroll-area)
@@ -148,6 +155,96 @@ printf '\e[?7l'
 
 # Enabling line wrapping.
 printf '\e[?7h'
+```
+
+### Moving the cursor to specific coordinates
+
+See:
+
+- https://vt100.net/docs/vt510-rm/CUP.html
+
+```sh
+# Move the cursor to 0,0.
+printf '\e[H'
+
+# Move the cursor to line 3, column 10.
+printf '\e[3;10H'
+
+# Move the cursor to line 5.
+printf '\e[5H'
+```
+
+### Moving the cursor to the bottom of the terminal.
+
+See:
+
+- [getting-the-window-size](#getting-the-window-size)
+- https://vt100.net/docs/vt510-rm/CUP.html
+
+```sh
+# Using terminal size, move cursor to bottom.
+printf '\e[%sH' "$LINES"
+```
+
+### Moving the cursor relatively
+
+When using these escape sequences and the cursor hits the edge of the window it stops.
+
+
+#### Cursor Up
+
+See:
+
+- https://vt100.net/docs/vt510-rm/CUU.html
+
+```sh
+# Move the cursor up a line.
+printf '\e[A'
+
+# Move the cursor up 10 lines.
+printf '\e[10A'
+```
+
+#### Cursor Down
+
+See:
+
+- https://vt100.net/docs/vt510-rm/CUD.html
+
+```sh
+# Move the cursor down a line.
+printf '\e[B'
+
+# Move the cursor down 10 lines.
+printf '\e[10B'
+```
+
+#### Cursor Left
+
+See:
+
+- https://vt100.net/docs/vt510-rm/CUB.html
+
+```sh
+# Move the cursor back a column.
+printf '\e[B'
+
+# Move the cursor back 10 columns.
+printf '\e[10B'
+```
+
+#### Cursor Right
+
+See:
+
+- https://vt100.net/docs/vt510-rm/CUF.html
+
+```sh
+# Move the cursor forward a column.
+printf '\e[B'
+
+# Move the cursor forward 10 columns.
+printf '\e[10B'
 ```
 
 ### Clearing the screen
