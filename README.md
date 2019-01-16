@@ -22,6 +22,7 @@ To date I have written 3 different programs using this method. The best example 
     * [Hiding and Showing the cursor](#hiding-and-showing-the-cursor)
     * [Line wrapping](#line-wrapping)
     * [Clearing the screen](#clearing-the-screen)
+    * [Setting the scroll area.](#setting-the-scroll-area)
 * [References](#references)
 
 <!-- vim-markdown-toc -->
@@ -161,6 +162,26 @@ printf '\e[2J'
 # Clear the screen and move cursor to (0,0).
 # This mimics the 'clear' command.
 printf '\e[2J\e[H'
+```
+
+### Setting the scroll area.
+
+This sequences allows you to limit the cursor's vertical position between two points. This comes in handy when you need to reserve portions of the screen for a top or bottom status-line.
+
+With this sequence set you will no longer be able to move the cursor outside of the defined boundaries. If you need to redraw a status-line or move the cursor beyond the boundaries you'll need to reset this sequence `\e[;r` and then set it again when you're done.
+
+This sequence also has the side-effect of moving the cursor to the top-left of the boundary. This means you can use it directly after a screen clear instead of `\e[H` (`\e[2J\e[0;10r`).
+
+See:
+
+- https://vt100.net/docs/vt510-rm/DECSTBM.html
+
+```sh
+# Limit scrolling from line 0 to line 10.
+printf '\e[0;10r'
+
+# Set scrolling margins back to default.
+printf '\e[;r`
 ```
 
 ## References
