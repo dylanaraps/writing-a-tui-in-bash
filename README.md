@@ -117,6 +117,8 @@ trap 'get_term_size' WINCH
 
 ## Escape Sequences
 
+For the purposes of this resource we won't be using `tput`. The `tput` command has a lot of overhead (`10-15 ms` per invocation) and won't make the program any more portable than sticking to standard **VT100** escape sequences. Using `tput` also adds a dependency on `ncurses` which defeats the whole purpose of doing this in `bash`.
+
 ### Hiding and Showing the cursor
 
 See:
