@@ -167,9 +167,9 @@ printf '\e[2J\e[H'
 
 ### Setting the scroll area.
 
-This sequences allows you to limit the cursor's vertical position between two points. This comes in handy when you need to reserve portions of the screen for a top or bottom status-line.
+This sequence allow you to limit the terminal's vertical scrolling area between two points. This comes in handy when you need to reserve portions of the screen for a top or bottom status-line (*you don't want them to scroll*).
 
-This sequence also has the side-effect of moving the cursor to the top-left of the boundary. This means you can use it directly after a screen clear instead of `\e[H` (`\e[2J\e[0;10r`).
+This sequence also has the side-effect of moving the cursor to the top-left of the boundaries. This means you can use it directly after a screen clear instead of `\e[H` (`\e[2J\e[0;10r`).
 
 See:
 
@@ -185,7 +185,11 @@ printf '\e[;r`
 
 ### Limiting cursor movement to inside the scroll area.
 
-With this sequence set you will no longer be able to move the cursor outside of the defined boundaries. If you need to redraw a status-line or move the cursor beyond the boundaries you'll need to reset this sequence `\e[?6l` and then set it again when you're done.
+With this sequence set you will no longer be able to move the cursor outside of the defined scroll boundaries. If you need to redraw a status-line or move the cursor beyond the boundaries you'll need to reset this sequence `\e[?6l` and then set it again when you're done.
+
+See:
+
+- https://vt100.net/docs/vt510-rm/DECOM.html
 
 ```sh
 # Restrict cursor movement to scroll area.
