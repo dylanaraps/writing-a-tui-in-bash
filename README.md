@@ -12,11 +12,75 @@ To date I have written 3 different programs using this method. The best example 
 
 <!-- vim-markdown-toc GFM -->
 
+* [Operating Systems](#operating-systems)
+    * [Identify the Operating System.](#identify-the-operating-system)
+    * [Documented `$OSTYPE` values.](#documented-ostype-values)
 * [Terminal Window Size.](#terminal-window-size)
     * [Getting the window size.](#getting-the-window-size)
     * [Reacting to window size changes.](#reacting-to-window-size-changes)
+* [References](#references)
 
 <!-- vim-markdown-toc -->
+
+
+## Operating Systems
+
+### Identify the Operating System.
+
+The quickest way to determine the current Operating System is the `$OSTYPE` variable. This variable is set at compile time in `bash` and typically stores the name of the running kernel or the name of the OS itself.
+
+You can also use the command `uname` to identify which OS is running. The `uname` command is POSIX and should be available everywhere. The output from `uname` does differ from `$OSTYPE` but there's a vast amount of documented information about it. [\[1\]](https://github.com/dylanaraps/neofetch/blob/415ef5d4aeb1cced7afcf9fd1223dd09c3306b9c/neofetch#L814-L845) [\[2\]](https://en.wikipedia.org/wiki/Uname)
+
+```sh
+get_os() {
+    # Figure out the current operating system to handle some
+    # OS specific behavior.
+    # '$OSTYPE' typically stores the name of the OS kernel.
+    case "$OSTYPE" in
+        linux*)
+            # ...
+        ;;
+
+        # Mac OS X / macOS.
+        darwin*)
+            # ...
+        ;;
+
+        openbsd*)
+            # ...
+        ;;
+
+        # Everything else.
+        *)
+            #...
+        ;;
+    esac
+}
+```
+
+### Documented `$OSTYPE` values.
+
+The table below was populated by users submitting the value of the `$OSTYPE` variable using the following command. If you're running an OS not mentioned below or the output differs, please open an issue with the correct value.
+
+```sh
+bash -c "echo $OSTYPE"
+```
+
+| OS     | `$OSTYPE` |
+| ----- | ---------- |
+| Linux | `linux-gnu` |
+| CYGWIN | `cygwin` |
+| Bash on Windows 10 | `linux-gnu` |
+| OpenBSD | `openbsd*` |
+| FreeBSD | `freebsd*` |
+| NetBSD | `netbsd` |
+| Mac OS | `darwin*` |
+| iOS | `darwin9` |
+| Solaris | `solaris*` |
+| Android (termux) | `linux-android` |
+| Android | `linux-gnu` |
+| Haiku OS | `haiku` |
+
 
 ## Terminal Window Size.
 
@@ -46,3 +110,8 @@ We're reacting to the signal by running the above `get_term_size()` function. Th
 # See: 'man trap' and 'trap -l'
 trap 'get_term_size' WINCH
 ```
+
+## References
+
+- \[1\]: https://github.com/dylanaraps/neofetch/blob/415ef5d4aeb1cced7afcf9fd1223dd09c3306b9c/neofetch#L814-L845
+- \[2\]: https://en.wikipedia.org/wiki/Uname
