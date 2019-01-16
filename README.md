@@ -20,7 +20,8 @@ To date I have written 3 different programs using this method. The best example 
     * [Reacting to window size changes.](#reacting-to-window-size-changes)
 * [Escape Sequences](#escape-sequences)
     * [Hiding and Showing the cursor](#hiding-and-showing-the-cursor)
-    * [Line Wrapping](#line-wrapping)
+    * [Line wrapping](#line-wrapping)
+    * [Clearing the screen](#clearing-the-screen)
 * [References](#references)
 
 <!-- vim-markdown-toc -->
@@ -118,7 +119,9 @@ trap 'get_term_size' WINCH
 
 ### Hiding and Showing the cursor
 
-See: https://vt100.net/docs/vt510-rm/DECTCEM.html
+See:
+
+- https://vt100.net/docs/vt510-rm/DECTCEM.html
 
 ```sh
 # Hiding the cursor.
@@ -128,9 +131,11 @@ printf '\e[?25l'
 printf '\e[?25h'
 ```
 
-### Line Wrapping
+### Line wrapping
 
-See: https://vt100.net/docs/vt510-rm/DECAWM.html
+See:
+
+- https://vt100.net/docs/vt510-rm/DECAWM.html
 
 ```sh
 # Disabling line wrapping.
@@ -138,6 +143,22 @@ printf '\e[?7l'
 
 # Enabling line wrapping.
 printf '\e[?7h'
+```
+
+### Clearing the screen
+
+See:
+
+- https://vt100.net/docs/vt510-rm/ED.html
+- https://vt100.net/docs/vt510-rm/CUP.html
+
+```sh
+# Clear the screen.
+printf '\e[2J'
+
+# Clear the screen and move cursor to (0,0).
+# This mimics the 'clear' command.
+printf '\e[2J\e[H'
 ```
 
 ## References
