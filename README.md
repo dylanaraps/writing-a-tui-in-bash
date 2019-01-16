@@ -23,6 +23,7 @@ To date I have written 3 different programs using this method. The best example 
     * [Line wrapping](#line-wrapping)
     * [Clearing the screen](#clearing-the-screen)
     * [Setting the scroll area.](#setting-the-scroll-area)
+    * [Limiting cursor movement to inside the scroll area.](#limiting-cursor-movement-to-inside-the-scroll-area)
 * [References](#references)
 
 <!-- vim-markdown-toc -->
@@ -168,8 +169,6 @@ printf '\e[2J\e[H'
 
 This sequences allows you to limit the cursor's vertical position between two points. This comes in handy when you need to reserve portions of the screen for a top or bottom status-line.
 
-With this sequence set you will no longer be able to move the cursor outside of the defined boundaries. If you need to redraw a status-line or move the cursor beyond the boundaries you'll need to reset this sequence `\e[;r` and then set it again when you're done.
-
 This sequence also has the side-effect of moving the cursor to the top-left of the boundary. This means you can use it directly after a screen clear instead of `\e[H` (`\e[2J\e[0;10r`).
 
 See:
@@ -182,6 +181,18 @@ printf '\e[0;10r'
 
 # Set scrolling margins back to default.
 printf '\e[;r`
+```
+
+### Limiting cursor movement to inside the scroll area.
+
+With this sequence set you will no longer be able to move the cursor outside of the defined boundaries. If you need to redraw a status-line or move the cursor beyond the boundaries you'll need to reset this sequence `\e[?6l` and then set it again when you're done.
+
+```sh
+# Restrict cursor movement to scroll area.
+printf '\e[?6h'
+
+# Unrestrict the cursor.
+printf '\e[?6l'
 ```
 
 ## References
