@@ -24,6 +24,7 @@ To date I have written 3 different programs using this method. The best example 
     * [Clearing the screen](#clearing-the-screen)
     * [Setting the scroll area.](#setting-the-scroll-area)
     * [Limiting cursor movement to inside the scroll area.](#limiting-cursor-movement-to-inside-the-scroll-area)
+    * [Saving and Restoring the user's terminal screen.](#saving-and-restoring-the-users-terminal-screen)
 * [References](#references)
 
 <!-- vim-markdown-toc -->
@@ -197,6 +198,20 @@ printf '\e[?6h'
 
 # Unrestrict the cursor.
 printf '\e[?6l'
+```
+
+### Saving and Restoring the user's terminal screen.
+
+This is one of the only non **VT100** I'll be covering. This sequence allows you to save and restore the user's terminal screen when running your program. When the user exits the program, their command-line will be restored as it was before running the program.
+
+While this sequence is XTerm specific, it is covered by almost all modern terminal emulators and simply ignored in older ones. There is also [DECCRA](https://vt100.net/docs/vt510-rm/DECCRA.html) which may or may not be more widely supported than the XTerm sequence but I haven't done much testing.
+
+```sh
+# Save the user's terminal screen.
+printf '\e[?1049h'
+
+# Restore the user's terminal screen.
+printf '\e[?1049l'
 ```
 
 ## References
