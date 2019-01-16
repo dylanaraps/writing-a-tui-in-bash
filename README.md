@@ -18,6 +18,9 @@ To date I have written 3 different programs using this method. The best example 
 * [Terminal Window Size.](#terminal-window-size)
     * [Getting the window size.](#getting-the-window-size)
     * [Reacting to window size changes.](#reacting-to-window-size-changes)
+* [Escape Sequences](#escape-sequences)
+    * [Hiding and Showing the cursor](#hiding-and-showing-the-cursor)
+    * [Line Wrapping](#line-wrapping)
 * [References](#references)
 
 <!-- vim-markdown-toc -->
@@ -109,6 +112,32 @@ We're reacting to the signal by running the above `get_term_size()` function. Th
 # Trap the window resize signal (handle window resize events).
 # See: 'man trap' and 'trap -l'
 trap 'get_term_size' WINCH
+```
+
+## Escape Sequences
+
+### Hiding and Showing the cursor
+
+See: https://vt100.net/docs/vt510-rm/DECTCEM.html
+
+```sh
+# Hiding the cursor.
+printf '\e[?25l'
+
+# Showing the cursor.
+printf '\e[?25h'
+```
+
+### Line Wrapping
+
+See: https://vt100.net/docs/vt510-rm/DECAWM.html
+
+```sh
+# Disabling line wrapping.
+printf '\e[?7l'
+
+# Enabling line wrapping.
+printf '\e[?7h'
 ```
 
 ## References
