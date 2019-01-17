@@ -278,7 +278,7 @@ See:
 printf '\e[0;10r'
 
 # Set scrolling margins back to default.
-printf '\e[;r`
+printf '\e[;r'
 ```
 
 ### Limiting cursor movement to inside the scroll area.
