@@ -227,10 +227,10 @@ See:
 
 ```sh
 # Move the cursor back a column.
-printf '\e[B'
+printf '\e[D'
 
 # Move the cursor back 10 columns.
-printf '\e[10B'
+printf '\e[10D'
 ```
 
 #### Cursor Right
@@ -241,10 +241,10 @@ See:
 
 ```sh
 # Move the cursor forward a column.
-printf '\e[B'
+printf '\e[C'
 
 # Move the cursor forward 10 columns.
-printf '\e[10B'
+printf '\e[10C'
 ```
 
 ### Clearing the screen
