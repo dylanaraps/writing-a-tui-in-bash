@@ -30,7 +30,6 @@ To date I have written 3 different programs using this method. The best example 
         * [Cursor Right](#cursor-right)
     * [Clearing the screen](#clearing-the-screen)
     * [Setting the scroll area.](#setting-the-scroll-area)
-    * [Limiting cursor movement to inside the scroll area.](#limiting-cursor-movement-to-inside-the-scroll-area)
     * [Saving and Restoring the user's terminal screen.](#saving-and-restoring-the-users-terminal-screen)
 * [References](#references)
 
@@ -279,22 +278,6 @@ printf '\e[0;10r'
 
 # Set scrolling margins back to default.
 printf '\e[;r'
-```
-
-### Limiting cursor movement to inside the scroll area.
-
-With this sequence set you will no longer be able to move the cursor outside of the defined scroll boundaries. If you need to redraw a status-line or move the cursor beyond the boundaries you'll need to reset this sequence `\e[?6l` and then set it again when you're done.
-
-See:
-
-- https://vt100.net/docs/vt510-rm/DECOM.html
-
-```sh
-# Restrict cursor movement to scroll area.
-printf '\e[?6h'
-
-# Unrestrict the cursor.
-printf '\e[?6l'
 ```
 
 ### Saving and Restoring the user's terminal screen.
