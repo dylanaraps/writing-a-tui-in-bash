@@ -82,18 +82,19 @@ bash -c "echo $OSTYPE"
 
 | OS     | `$OSTYPE` |
 | ----- | ---------- |
-| Linux | `linux-gnu` |
-| CYGWIN | `cygwin` |
+| Linux with glibc | `linux-gnu` |
+| Linux with musl | `linux-musl` |
+| Cygwin | `cygwin` |
 | Bash on Windows 10 | `linux-gnu` |
 | OpenBSD | `openbsd*` |
 | FreeBSD | `freebsd*` |
 | NetBSD | `netbsd` |
-| Mac OS | `darwin*` |
+| macOS | `darwin*` |
 | iOS | `darwin9` |
 | Solaris | `solaris*` |
-| Android (termux) | `linux-android` |
+| Android (Termux) | `linux-android` |
 | Android | `linux-gnu` |
-| Haiku OS | `haiku` |
+| Haiku | `haiku` |
 
 
 ## Terminal Window Size.
