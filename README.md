@@ -308,7 +308,7 @@ printf '\e[;r'
 
 ### Saving and Restoring the user's terminal screen.
 
-This is one of the only non **VT100** I'll be covering. This sequence allows you to save and restore the user's terminal screen when running your program. When the user exits the program, their command-line will be restored as it was before running the program.
+This is the only non **VT100** sequences I'll be covering. This sequence allows you to save and restore the user's terminal screen when running your program. When the user exits the program, their command-line will be restored as it was before running the program.
 
 While this sequence is XTerm specific, it is covered by almost all modern terminal emulators and simply ignored in older ones. There is also [DECCRA](https://vt100.net/docs/vt510-rm/DECCRA.html) which may or may not be more widely supported than the XTerm sequence but I haven't done much testing.
 
