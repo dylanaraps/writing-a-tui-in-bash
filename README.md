@@ -15,9 +15,11 @@ To date I have written 3 different programs using this method. The best example 
 * [Operating Systems](#operating-systems)
     * [Identify the Operating System.](#identify-the-operating-system)
     * [Documented `$OSTYPE` values.](#documented-ostype-values)
-* [Terminal Window Size.](#terminal-window-size)
-    * [Getting the window size.](#getting-the-window-size)
-    * [Reacting to window size changes.](#reacting-to-window-size-changes)
+* [Getting the window size.](#getting-the-window-size)
+    * [Using cursor position](#using-cursor-position)
+    * [Using `checkwinsize`](#using-checkwinsize)
+    * [Using `stty`](#using-stty)
+* [Reacting to window size changes.](#reacting-to-window-size-changes)
 * [Escape Sequences](#escape-sequences)
     * [Hiding and Showing the cursor](#hiding-and-showing-the-cursor)
     * [Line wrapping](#line-wrapping)
@@ -96,14 +98,37 @@ bash -c "echo $OSTYPE"
 | Haiku | `haiku` |
 
 
-## Terminal Window Size.
+## Getting the window size.
 
+### Using cursor position
 
-### Getting the window size.
+This function figures out the terminal window size by moving the cursor to the bottom right corner and then querying the terminal for the cursor's position. As the terminal is made up of cells the bottom right corner is equal to the terminal's size.
 
-This function calls `stty size` to query the terminal for its size. This can be done in pure bash by setting `shopt -s checkwinsize` and using some trickery to capture the `$LINES` and `$COLUMNS` variables but this method is unreliable and only works in some versions of `bash`.
+```sh
+get_term_size() {
+    # '\e7':           Save the current cursor position.
+    # '\e[9999;9999H': Move the cursor to the bottom right corner.
+    # '\e[6n':         Get the cursor position (window size).
+    # '\e8':           Restore the cursor to its previous position.
+    IFS='[;' read -sp $'\e7\e[9999;9999H\e[6n\e8' -d R -rs _ LINES COLUMNS
+}
+```
 
-The `stty` command is POSIX and should be available everywhere which makes it a reliable and viable alternative.
+### Using `checkwinsize`
+
+**Note**: This only works in `bash 4+`.
+
+When `checkwinsize` is enabled and `bash` receives a command, the `LINES` and `COLUMNS` variables are populated with the terminal window size. The `(:;:)` snippet works as a pseudo command, populating the variables without running anything external.
+
+```sh
+get_term_size() {
+    shopt -s checkwinsize; (:;:)
+}
+```
+
+### Using `stty`
+
+This function calls `stty size` to query the terminal for its size. The `stty` command is POSIX and should be available everywhere which makes it a viable alternative to the pure `bash` solutions.
 
 ```sh
 get_term_size() {
@@ -113,7 +138,7 @@ get_term_size() {
 }
 ```
 
-### Reacting to window size changes.
+## Reacting to window size changes.
 
 Using `trap` allows us to capture and react to specific signals sent to the running program. In this case we're trapping the `SIGWINCH` signal which is sent to the terminal and the running shell on window resize.
 
