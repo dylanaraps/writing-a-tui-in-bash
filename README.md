@@ -87,6 +87,9 @@ bash -c "echo $OSTYPE"
 | Linux with musl | `linux-musl` |
 | Cygwin | `cygwin` |
 | Bash on Windows 10 | `linux-gnu` |
+| Msys | `msys` |
+| Mingw64 | `msys` |
+| Mingw32 | `msys` |
 | OpenBSD | `openbsd*` |
 | FreeBSD | `freebsd*` |
 | NetBSD | `netbsd` |
