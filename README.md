@@ -1,12 +1,23 @@
 # Writing a TUI in BASH [WIP]
 
-Through my travels I've discovered it's possible to write a fully functional Terminal User Interface in BASH. The object of this guide is to document and teach the concepts in a simple way. To my knowledge they aren't documented anywhere so this is essential.
+Through my travels I've discovered it's possible to write a fully functional
+Terminal User Interface in BASH. The object of this guide is to document and
+teach the concepts in a simple way. To my knowledge they aren't documented
+anywhere so this is essential.
 
-The benefit of using BASH is the lack of needed dependencies. If the system has BASH available, the program will run. Now there are cases against using BASH and they're most of the time valid. However, there are cases where BASH is the only thing available and that's where this guide comes in.
+The benefit of using BASH is the lack of needed dependencies. If the system has
+BASH available, the program will run. Now there are cases against using BASH and
+they're most of the time valid. However, there are cases where BASH is the only
+thing available and that's where this guide comes in.
 
-This guide covers BASH `3.2+` which covers pretty much every OS you'll come across. One of the major reasons for covering this version is macOS which will be forever stuck on BASH `3`.
 
-To date I have written 3 different programs using this method. The best example of a TUI that covers most vital features is [**fff**](https://github.com/dylanaraps/fff) which is a Terminal File manager.
+This guide covers BASH `3.2+` which covers pretty much every OS you'll come
+across. One of the major reasons for covering this version is macOS which will
+be forever stuck on BASH `3`.
+
+To date I have written 3 different programs using this method. The best example
+of a TUI that covers most vital features is
+[**fff**](https://github.com/dylanaraps/fff) which is a Terminal File manager.
 
 ## Table of Contents
 
@@ -42,9 +53,16 @@ To date I have written 3 different programs using this method. The best example 
 
 ### Identify the Operating System.
 
-The quickest way to determine the current Operating System is the `$OSTYPE` variable. This variable is set at compile time in `bash` and typically stores the name of the running kernel or the name of the OS itself.
+The quickest way to determine the current Operating System is the `$OSTYPE`
+variable. This variable is set at compile time in `bash` and typically stores
+the name of the running kernel or the name of the OS itself.
 
-You can also use the command `uname` to identify which OS is running. The `uname` command is POSIX and should be available everywhere. The output from `uname` does differ from `$OSTYPE` but there's a vast amount of documented information about it. [\[1\]](https://github.com/dylanaraps/neofetch/blob/415ef5d4aeb1cced7afcf9fd1223dd09c3306b9c/neofetch#L814-L845) [\[2\]](https://en.wikipedia.org/wiki/Uname)
+You can also use the command `uname` to identify which OS is running. The
+`uname` command is POSIX and should be available everywhere. The output from
+`uname` does differ from `$OSTYPE` but there's a vast amount of documented
+information about
+it. [\[1\]](https://github.com/dylanaraps/neofetch/blob/415ef5d4aeb1cced7afcf9fd1223dd09c3306b9c/neofetch#L814-L845)
+[\[2\]](https://en.wikipedia.org/wiki/Uname)
 
 ```sh
 get_os() {
@@ -75,7 +93,9 @@ get_os() {
 
 ### Documented `$OSTYPE` values.
 
-The table below was populated by users submitting the value of the `$OSTYPE` variable using the following command. If you're running an OS not mentioned below or the output differs, please open an issue with the correct value.
+The table below was populated by users submitting the value of the `$OSTYPE`
+variable using the following command. If you're running an OS not mentioned
+below or the output differs, please open an issue with the correct value.
 
 ```sh
 bash -c "echo $OSTYPE"
@@ -105,7 +125,10 @@ bash -c "echo $OSTYPE"
 
 ### Using cursor position
 
-This function figures out the terminal window size by moving the cursor to the bottom right corner and then querying the terminal for the cursor's position. As the terminal is made up of cells the bottom right corner is equal to the terminal's size.
+This function figures out the terminal window size by moving the cursor to the
+bottom right corner and then querying the terminal for the cursor's position. As
+the terminal is made up of cells the bottom right corner is equal to the
+terminal's size.
 
 ```sh
 get_term_size() {
@@ -121,7 +144,10 @@ get_term_size() {
 
 **Note**: This only works in `bash 4+`.
 
-When `checkwinsize` is enabled and `bash` receives a command, the `LINES` and `COLUMNS` variables are populated with the terminal window size. The `(:;:)` snippet works as a pseudo command, populating the variables without running anything external.
+When `checkwinsize` is enabled and `bash` receives a command, the `LINES` and
+`COLUMNS` variables are populated with the terminal window size. The `(:;:)`
+snippet works as a pseudo command, populating the variables without running
+anything external.
 
 ```sh
 get_term_size() {
@@ -131,7 +157,9 @@ get_term_size() {
 
 ### Using `stty`
 
-This function calls `stty size` to query the terminal for its size. The `stty` command is POSIX and should be available everywhere which makes it a viable alternative to the pure `bash` solutions.
+This function calls `stty size` to query the terminal for its size. The `stty`
+command is POSIX and should be available everywhere which makes it a viable
+alternative to the pure `bash` solutions.
 
 ```sh
 get_term_size() {
@@ -143,9 +171,13 @@ get_term_size() {
 
 ## Reacting to window size changes.
 
-Using `trap` allows us to capture and react to specific signals sent to the running program. In this case we're trapping the `SIGWINCH` signal which is sent to the terminal and the running shell on window resize.
+Using `trap` allows us to capture and react to specific signals sent to the
+running program. In this case we're trapping the `SIGWINCH` signal which is sent
+to the terminal and the running shell on window resize.
 
-We're reacting to the signal by running the above `get_term_size()` function. The variables `$LINES` and `$COLUMNS` will be updated with the new terminal size ready to use elsewhere in the program.
+We're reacting to the signal by running the above `get_term_size()`
+function. The variables `$LINES` and `$COLUMNS` will be updated with the new
+terminal size ready to use elsewhere in the program.
 
 ```sh
 # Trap the window resize signal (handle window resize events).
@@ -155,7 +187,11 @@ trap 'get_term_size' WINCH
 
 ## Escape Sequences
 
-For the purposes of this resource we won't be using `tput`. The `tput` command has a lot of overhead (`10-15 ms` per invocation) and won't make the program any more portable than sticking to standard **VT100** escape sequences. Using `tput` also adds a dependency on `ncurses` which defeats the whole purpose of doing this in `bash`.
+For the purposes of this resource we won't be using `tput`. The `tput` command
+has a lot of overhead (`10-15 ms` per invocation) and won't make the program any
+more portable than sticking to standard **VT100** escape sequences. Using `tput`
+also adds a dependency on `ncurses` which defeats the whole purpose of doing
+this in `bash`.
 
 ### Hiding and Showing the cursor
 
@@ -216,8 +252,8 @@ printf '\e[%sH' "$LINES"
 
 ### Moving the cursor relatively
 
-When using these escape sequences and the cursor hits the edge of the window it stops.
-
+When using these escape sequences and the cursor hits the edge of the window it
+stops.
 
 #### Cursor Up
 
@@ -293,9 +329,13 @@ printf '\e[2J\e[H'
 
 ### Setting the scroll area.
 
-This sequence allow you to limit the terminal's vertical scrolling area between two points. This comes in handy when you need to reserve portions of the screen for a top or bottom status-line (*you don't want them to scroll*).
+This sequence allow you to limit the terminal's vertical scrolling area between
+two points. This comes in handy when you need to reserve portions of the screen
+for a top or bottom status-line (*you don't want them to scroll*).
 
-This sequence also has the side-effect of moving the cursor to the top-left of the boundaries. This means you can use it directly after a screen clear instead of `\e[H` (`\e[2J\e[0;10r`).
+This sequence also has the side-effect of moving the cursor to the top-left of
+the boundaries. This means you can use it directly after a screen clear instead
+of `\e[H` (`\e[2J\e[0;10r`).
 
 See:
 
@@ -311,9 +351,15 @@ printf '\e[;r'
 
 ### Saving and Restoring the user's terminal screen.
 
-This is the only non **VT100** sequences I'll be covering. This sequence allows you to save and restore the user's terminal screen when running your program. When the user exits the program, their command-line will be restored as it was before running the program.
+This is the only non **VT100** sequences I'll be covering. This sequence allows
+you to save and restore the user's terminal screen when running your
+program. When the user exits the program, their command-line will be restored as
+it was before running the program.
 
-While this sequence is XTerm specific, it is covered by almost all modern terminal emulators and simply ignored in older ones. There is also [DECCRA](https://vt100.net/docs/vt510-rm/DECCRA.html) which may or may not be more widely supported than the XTerm sequence but I haven't done much testing.
+While this sequence is XTerm specific, it is covered by almost all modern
+terminal emulators and simply ignored in older ones. There is also
+[DECCRA](https://vt100.net/docs/vt510-rm/DECCRA.html) which may or may not be
+more widely supported than the XTerm sequence but I haven't done much testing.
 
 ```sh
 # Save the user's terminal screen.
