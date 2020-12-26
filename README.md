@@ -2,21 +2,20 @@
 
 Through my travels I've discovered it's possible to write a fully functional
 Terminal User Interface in BASH. The object of this guide is to document and
-teach the concepts in a simple way. To my knowledge they aren't documented
-anywhere so this is essential.
+teach the concepts in a simple way. To my knowledge, they aren't documented
+anywhere, so this is essential.
 
 The benefit of using BASH is the lack of needed dependencies. If the system has
-BASH available, the program will run. Now there are cases against using BASH and
-they're most of the time valid. However, there are cases where BASH is the only
-thing available and that's where this guide comes in.
+BASH available, the program will run. Now, there are arguments against using
+BASH, and they're most of the time valid. However, there are cases where BASH is
+the only thing available, and that's where this guide comes in.
 
+This guide covers BASH `3.2+`, which encompasses pretty much every OS you'll
+come across. One of the major reasons for covering this version is macOS, which
+will be forever stuck with BASH `3`.
 
-This guide covers BASH `3.2+` which covers pretty much every OS you'll come
-across. One of the major reasons for covering this version is macOS which will
-be forever stuck on BASH `3`.
-
-To date I have written 3 different programs using this method. The best example
-of a TUI that covers most vital features is
+To date I have written 3 different programs using the techniques described in
+this document. The best example of a TUI that covers most vital features is
 [**fff**](https://github.com/dylanaraps/fff) which is a Terminal File manager.
 
 ## Table of Contents
